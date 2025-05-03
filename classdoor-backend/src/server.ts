@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { Server as SocketIOServer } from 'socket.io';
 import cookieParser from 'cookie-parser';
+import connectCloudinary from './config/cloudinary.js';
 
 // Load environment variables
 dotenv.config();
