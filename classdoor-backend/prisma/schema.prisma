@@ -13,3 +13,146 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model AnonymousUser {
+  id           String        @id @default(uuid())
+  deviceHash   String?       @unique // Optional fingerprinting for abuse prevention
+  createdAt    DateTime      @default(now())
+  lastActive   DateTime      @default(now())
+  reviews      Review[]
+  discussions  Discussion[]
+  comments     Comment[]
+  reactions    Reaction[]
+}
+
+model College {
+  id           String       @id @default(uuid())
+  name         String
+  location     String
+  website      String?
+  logoUrl      String?
+  description  String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  professors   Professor[]
+  courses      Course[]
+  discussions  Discussion[]
+  reviews      Review[]     
+
+  @@unique([name, location])
+}
+
+model Professor {
+  id           String     @id @default(uuid())
+  name         String
+  department   String
+  bio          String?
+  imageUrl     String?
+  collegeId    String
+  college      College    @relation(fields: [collegeId], references: [id])
+  courses      Course[]
+  reviews      Review[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([name, collegeId, department])
+}
+
+model Course {
+  id           String     @id @default(uuid())
+  code         String
+  name         String
+  description  String?
+  collegeId    String
+  college      College    @relation(fields: [collegeId], references: [id])
+  professors   Professor[]
+  reviews      Review[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([code, collegeId])
+}
+
+model Review {
+  id           String     @id @default(uuid())
+  content      String
+  rating       Float      @default(0)
+  anonymous    Boolean    @default(true)
+  authorId     String
+  author       AnonymousUser @relation(fields: [authorId], references: [id])
+  professorId  String?
+  professor    Professor? @relation(fields: [professorId], references: [id])
+  courseId     String?
+  course       Course?    @relation(fields: [courseId], references: [id])
+  collegeId    String?
+  college      College?   @relation(fields: [collegeId], references: [id])
+  type         ReviewType @default(PROFESSOR)
+  tags         String[]
+  reactions    Reaction[]
+  comments     Comment[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+enum ReviewType {
+  PROFESSOR
+  COURSE
+  CAMPUS
+}
+
+model Discussion {
+  id           String     @id @default(uuid())
+  title        String
+  content      String
+  authorId     String
+  author       AnonymousUser @relation(fields: [authorId], references: [id])
+  collegeId    String
+  college      College    @relation(fields: [collegeId], references: [id])
+  tags         String[]
+  comments     Comment[]
+  reactions    Reaction[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+
+model Comment {
+  id           String       @id @default(uuid())
+  content      String
+  authorId     String
+  author       AnonymousUser @relation(fields: [authorId], references: [id])
+  reviewId     String?
+  review       Review?      @relation(fields: [reviewId], references: [id])
+  discussionId String?
+  discussion   Discussion?  @relation(fields: [discussionId], references: [id])
+  parentId     String?
+  parent       Comment?     @relation("CommentToComment", fields: [parentId], references: [id])
+  children     Comment[]    @relation("CommentToComment")
+  reactions    Reaction[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model Reaction {
+  id           String       @id @default(uuid())
+  type         ReactionType
+  authorId     String
+  author       AnonymousUser @relation(fields: [authorId], references: [id])
+  reviewId     String?
+  review       Review?      @relation(fields: [reviewId], references: [id])
+  discussionId String?
+  discussion   Discussion?  @relation(fields: [discussionId], references: [id])
+  commentId    String?
+  comment      Comment?     @relation(fields: [commentId], references: [id])
+  createdAt    DateTime     @default(now())
+
+  @@unique([authorId, reviewId, discussionId, commentId, type])
+}
+
+enum ReactionType {
+  LIKE
+  DISLIKE
+  HELPFUL
+  FUNNY
+  INSIGHTFUL
+}
