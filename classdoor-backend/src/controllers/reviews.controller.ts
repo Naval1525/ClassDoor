@@ -29,7 +29,8 @@ export const getReviewById = async (req: Request, res: Response) => {
 
 export const createReview = async (req: Request, res: Response) => {
   try {
-    const { content, rating, professorId, courseId, collegeId, type, tags } = req.body;
+    const { content, rating, professorId, courseId, collegeId, type, tags } =
+      req.body;
     const authorId = req.user?.anonId;
     if (!authorId) {
       return res.status(401).json({ error: "Authentication required" });
@@ -56,103 +57,92 @@ export const createReview = async (req: Request, res: Response) => {
 };
 
 export const updateReview = async (req: Request, res: Response) => {
-    try{
-        const { id } = req.params;
-        const { content, rating, type, tags } = req.body;
-        const authorId = req.user?.anonId;
-        const existingReview = await prisma.review.findUnique({ where: { id } });
-        if (!existingReview) {
-            res.status(404).json({ message: "Review not found." });
-            return;
-        }
-        if (existingReview.authorId!== authorId) {
-            return res.status(403).json({ error: "Unauthorized to update this review." });
-        }
-        const updatedReview = await prisma.review.update({
-            where: { id },
-            data: { content, rating, type, tags },
-        });
+  try {
+    const { id } = req.params;
+    const { content, rating, type, tags } = req.body;
+    const authorId = req.user?.anonId;
+    const existingReview = await prisma.review.findUnique({ where: { id } });
+    if (!existingReview) {
+      res.status(404).json({ message: "Review not found." });
+      return;
+    }
+    if (existingReview.authorId !== authorId) {
+      return res
+        .status(403)
+        .json({ error: "Unauthorized to update this review." });
+    }
+    const updatedReview = await prisma.review.update({
+      where: { id },
+      data: { content, rating, type, tags },
+    });
 
-        res.json({ data: updatedReview });
-    }
-    catch (error) {
-        handleControllerError(error, res);
-    }
+    res.json({ data: updatedReview });
+  } catch (error) {
+    handleControllerError(error, res);
+  }
 };
 
 export const deleteReview = async (req: Request, res: Response) => {
-    try{
-        const { id } = req.params;
-        const authorId = req.user?.anonId;
-        const existingReview = await prisma.review.findUnique({ where: { id } });
-        if (!existingReview) {
-            res.status(404).json({ message: "Review not found." });
-            return;
-        }
-        if (existingReview.authorId!== authorId) {
-            return res.status(403).json({ error: "Unauthorized to delete this review." });
-        }
-        await prisma.review.delete({ where: { id } });
+  try {
+    const { id } = req.params;
+    const authorId = req.user?.anonId;
+    const existingReview = await prisma.review.findUnique({ where: { id } });
+    if (!existingReview) {
+      res.status(404).json({ message: "Review not found." });
+      return;
+    }
+    if (existingReview.authorId !== authorId) {
+      return res
+        .status(403)
+        .json({ error: "Unauthorized to delete this review." });
+    }
+    await prisma.review.delete({ where: { id } });
 
-        res.status(204).send();
-    }
-    catch (error) {
-        handleControllerError(error, res);
-    }
+    res.status(204).send();
+  } catch (error) {
+    handleControllerError(error, res);
+  }
 };
-
 
 export const addReviewReaction = async (req: Request, res: Response) => {
-    try {
-      const { id } = req.params;
-      const { type } = req.body;
-      if (!req.user) {
-        return res.status(401).json({ error: 'Authentication required' });
-      }
-      const reaction = await prisma.reaction.create({
-        data: {
-          type,
-          authorId: req.user.anonId,
-          reviewId: id,
-        },
-      });
-      res.status(201).json({ message: 'Reaction created successfully', reaction });
-    } catch (error) {
-        handleControllerError(error, res);
-
+  try {
+    const { id } = req.params;
+    const { type } = req.body;
+    if (!req.user) {
+      return res.status(401).json({ error: "Authentication required" });
     }
+    const reaction = await prisma.reaction.create({
+      data: {
+        type,
+        authorId: req.user.anonId,
+        reviewId: id,
+      },
+    });
+    res
+      .status(201)
+      .json({ message: "Reaction created successfully", reaction });
+  } catch (error) {
+    handleControllerError(error, res);
+  }
 };
 
-
 export const removeReviewReaction = async (req: Request, res: Response) => {
-    const { id, type } = req.params;
+  const { id, type } = req.params;
+  try {
+    const deletedReaction = await prisma.reaction.deleteMany({
+      where: {
+        authorId: req.user?.anonId,
+        reviewId: id,
+        type: type as ReactionType,
+      },
+    });
 
-    if (!Object.values(ReactionType).includes(type as ReactionType)) {
-      return res.status(400).json({ error: 'Invalid reaction type' });
+    if (deletedReaction.count === 0) {
+      return res.status(404).json({ error: "Reaction not found" });
     }
 
-    try {
-      const deletedReaction = await prisma.reaction.deleteMany({
-        where: {
-          authorId: req.user?.anonId,
-          reviewId: id,
-          type: type as ReactionType,
-        },
-      });
-
-      if (deletedReaction.count === 0) {
-        return res.status(404).json({ error: 'Reaction not found' });
-      }
-
-      return res.status(200).json({ message: 'Reaction deleted successfully' });
-    } catch (error) {
-        handleControllerError(error, res);
-    }
-  };
-
-
-
-
-
-
-
+    return res.status(200).json({ message: "Reaction deleted successfully" });
+  } catch (error) {
+    handleControllerError(error, res);
+  }
+};
