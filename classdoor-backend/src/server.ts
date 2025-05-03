@@ -9,6 +9,7 @@ import authRouter from "./routes/auth.route.js";
 import professorsRouter from "./routes/professor.route.js";
 import collegeRouter from "./routes/college.route.js";
 import coursesRouter from "./routes/course.route.js";
+import reviewsRouter from "./routes/reviews.route.js";
 
 // Load environment variables
 dotenv.config();
@@ -35,6 +36,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/professor", professorsRouter);
 app.use("/api/college", collegeRouter);
 app.use("/api/course", coursesRouter);
+app.use("/api/reviews", reviewsRouter);
 
 // Routes
 app.get("/", (_req, res) => {

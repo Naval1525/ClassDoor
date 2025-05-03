@@ -1,148 +1,110 @@
 import { Request, Response } from "express";
+import * as reviewService from "../services/reviews.service.js";
 import { handleControllerError } from "../middleware/error.middleware.js";
-import prisma from "@/config/db.js";
-import { ReactionType } from "@/generated/prisma/index.js";
 
 export const getAllReviews = async (req: Request, res: Response) => {
   try {
-    const data = await prisma.review.findMany();
+    const data = await reviewService.getAllReviews();
     res.json({ data });
-  } catch (error) {
-    handleControllerError(error, res);
+  } catch (e) {
+    handleControllerError(e, res);
   }
 };
 
 export const getReviewById = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    const data = await prisma.review.findUnique({ where: { id } });
-
-    if (!data) {
-      res.status(404).json({ message: "Review not found." });
-    } else {
-      res.json({ data });
-    }
-  } catch (error) {
-    handleControllerError(error, res);
+    const data = await reviewService.getReviewById(req.params.id);
+    if (!data) res.status(404).json({ message: "Review not found." });
+    else res.json({ data });
+  } catch (e) {
+    handleControllerError(e, res);
   }
 };
 
-export const createReview = async (req: Request, res: Response) => {
+export const createReview = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const { content, rating, professorId, courseId, collegeId, type, tags } =
-      req.body;
     const authorId = req.user?.anonId;
-    if (!authorId) {
-      return res.status(401).json({ error: "Authentication required" });
-    }
-
-    const newReview = await prisma.review.create({
-      data: {
-        content,
-        rating,
-        professorId,
-        courseId,
-        collegeId,
-        type,
-        tags,
-        authorId,
-        anonymous: true,
-      },
-    });
-
-    res.status(201).json({ data: newReview });
-  } catch (error) {
-    handleControllerError(error, res);
+    if (!authorId) res.status(401).json({ error: "Authentication required" });
+    const data = await reviewService.createReview({ ...req.body, authorId });
+    res.status(201).json({ data });
+  } catch (e) {
+    handleControllerError(e, res);
   }
 };
 
-export const updateReview = async (req: Request, res: Response) => {
+export const updateReview = async (
+  req: Request,
+  res: Response
+): Promise<void|Response> => {
   try {
-    const { id } = req.params;
-    const { content, rating, type, tags } = req.body;
     const authorId = req.user?.anonId;
-    const existingReview = await prisma.review.findUnique({ where: { id } });
-    if (!existingReview) {
-      res.status(404).json({ message: "Review not found." });
-      return;
-    }
-    if (existingReview.authorId !== authorId) {
-      return res
-        .status(403)
-        .json({ error: "Unauthorized to update this review." });
-    }
-    const updatedReview = await prisma.review.update({
-      where: { id },
-      data: { content, rating, type, tags },
-    });
-
-    res.json({ data: updatedReview });
-  } catch (error) {
-    handleControllerError(error, res);
+    const { id } = req.params;
+    const updated = await reviewService.updateReview(id, req.body, authorId);
+    if (updated === "not_found")
+      return res.status(404).json({ message: "Review not found." });
+    if (updated === "unauthorized")
+      return res.status(403).json({ error: "Unauthorized" });
+    res.json({ data: updated });
+  } catch (e) {
+    handleControllerError(e, res);
   }
 };
 
-export const deleteReview = async (req: Request, res: Response) => {
+export const deleteReview = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const { id } = req.params;
     const authorId = req.user?.anonId;
-    const existingReview = await prisma.review.findUnique({ where: { id } });
-    if (!existingReview) {
+    const deleted = await reviewService.deleteReview(req.params.id, authorId);
+    if (deleted === "not_found")
       res.status(404).json({ message: "Review not found." });
-      return;
-    }
-    if (existingReview.authorId !== authorId) {
-      return res
-        .status(403)
-        .json({ error: "Unauthorized to delete this review." });
-    }
-    await prisma.review.delete({ where: { id } });
-
+    if (deleted === "unauthorized")
+      res.status(403).json({ error: "Unauthorized" });
     res.status(204).send();
-  } catch (error) {
-    handleControllerError(error, res);
+  } catch (e) {
+    handleControllerError(e, res);
   }
 };
 
-export const addReviewReaction = async (req: Request, res: Response) => {
+export const addReviewReaction = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const { id } = req.params;
-    const { type } = req.body;
     if (!req.user) {
-      return res.status(401).json({ error: "Authentication required" });
+      res.status(401).json({ error: "Authentication required" });
+      return;
     }
-    const reaction = await prisma.reaction.create({
-      data: {
-        type,
-        authorId: req.user.anonId,
-        reviewId: id,
-      },
-    });
+    const reaction = await reviewService.addReaction(
+      req.params.id,
+      req.user.anonId,
+      req.body.type
+    );
     res
       .status(201)
       .json({ message: "Reaction created successfully", reaction });
-  } catch (error) {
-    handleControllerError(error, res);
+  } catch (e) {
+    handleControllerError(e, res);
   }
 };
 
-export const removeReviewReaction = async (req: Request, res: Response) => {
-  const { id, type } = req.params;
+export const removeReviewReaction = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const deletedReaction = await prisma.reaction.deleteMany({
-      where: {
-        authorId: req.user?.anonId,
-        reviewId: id,
-        type: type as ReactionType,
-      },
-    });
-
-    if (deletedReaction.count === 0) {
-      return res.status(404).json({ error: "Reaction not found" });
-    }
-
-    return res.status(200).json({ message: "Reaction deleted successfully" });
-  } catch (error) {
-    handleControllerError(error, res);
+    const deleted = await reviewService.removeReaction(
+      req.params.id,
+      req.params.type,
+      req.user?.anonId
+    );
+    if (!deleted) res.status(404).json({ error: "Reaction not found" });
+    res.status(200).json({ message: "Reaction deleted successfully" });
+  } catch (e) {
+    handleControllerError(e, res);
   }
 };
