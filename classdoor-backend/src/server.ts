@@ -27,6 +27,14 @@ app.get('/', (_req, res) => {
   res.send('🚀 Classdoor backend is up and running!');
 });
 
+
+
+
+
+
+
+
+
 // Socket.IO setup
 io.on('connection', (socket) => {
   console.log(`🟢 New socket connected: ${socket.id}`);
