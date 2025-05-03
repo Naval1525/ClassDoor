@@ -1,5 +1,5 @@
 // Simple seed script for college database
-import prisma from "../src/config/db.js"
+import prisma from "./db.js"
 
 
 // Indian colleges data
@@ -44,7 +44,7 @@ const indianColleges = [
 // Main function to seed the database
 async function seedDatabase() {
   console.log('Starting database seeding...');
-  
+
   try {
     // Create each college in the database
     for (const college of indianColleges) {
@@ -58,10 +58,10 @@ async function seedDatabase() {
         update: college,
         create: college
       });
-      
+
       console.log(`Added/Updated college: ${college.name}`);
     }
-    
+
     console.log('Database seeding completed successfully!');
   } catch (error) {
     console.error('Error seeding database:', error);
