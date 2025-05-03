@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 // Parameter validation schema
 export const idParamSchema = z.object({
-  id: z.string().uuid("Invalid professor ID format"),
+  id: z.string().uuid("Invalid ID format"),
 });
 
 
@@ -39,4 +39,14 @@ export const courseSchema = z.object({
   professorIds: z.array(z.string().uuid()).optional()
 });
 
+// Review schema
+export const reviewSchema = z.object({
+  content: z.string().min(10).max(2000),
+  rating: z.number().min(1).max(5),
+  professorId: z.string().uuid().optional(),
+  courseId: z.string().uuid().optional(),
+  collegeId: z.string().uuid().optional(),
+  type: z.enum(['PROFESSOR', 'COURSE', 'CAMPUS']),
+  tags: z.array(z.string().min(2).max(30)).max(5)
+});
 
