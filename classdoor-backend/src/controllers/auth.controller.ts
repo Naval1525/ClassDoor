@@ -34,20 +34,40 @@ export const createAnonymousSession = async (req: Request, res:Response) => {
 export const refreshAnonymousSession = async (req: Request, res: Response) => {
     try {
       const token = req.cookies.anonToken;
-      if (!token) return res.status(401).json({ message: 'No token found.' });
-
+      if (!token) {
+        return res.status(401).json({ message: 'No token found, please log in.' });
+      }
       jwt.verify(token, process.env.JWT_SECRET as string, async (err:any, decoded:any) => {
-        if (err) return res.status(403).json({ message: 'Invalid token.' });
+        if (err) {
+          return res.status(403).json({ message: 'Invalid or expired token.' });
+        }
+        const { anonId } = decoded as { anonId: string };
 
-        const user = await prisma.anonymousUser.findUnique({ where: { id: (decoded as any).anonId } });
-        if (!user) return res.status(404).json({ message: 'User not found.' });
+        const user = await prisma.anonymousUser.findUnique({
+          where: { id: anonId },
+        });
 
-        const newToken = jwt.sign({ anonId: user.id }, process.env.JWT_SECRET as string, { expiresIn: '30d' });
-        res.cookie('anonToken', newToken, { httpOnly: true, maxAge: 30 * 24 * 60 * 60 * 1000, secure: process.env.NODE_ENV === 'production', sameSite: 'strict' });
+        if (!user) {
+          return res.status(404).json({ message: 'User not found.' });
+        }
+
+        const newToken = jwt.sign(
+          { anonId: user.id },
+          process.env.JWT_SECRET as string,
+          { expiresIn: '30d' }
+        );
+
+        res.cookie('anonToken', newToken, {
+          httpOnly: true,
+          maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
+        });
+
+
         return res.status(200).json({ anonId: user.id, token: newToken });
       });
     } catch (error) {
-      handleControllerError(error, res);
+      handleControllerError(error, res); // Handle errors via your custom error handler
     }
   };
-
