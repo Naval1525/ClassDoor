@@ -7,6 +7,8 @@ import cookieParser from "cookie-parser";
 import connectCloudinary from "./config/cloudinary.js";
 import authRouter from "./routes/auth.route.js";
 import professorsRouter from "./routes/professor.route.js";
+import collegeRouter from "./routes/college.route.js";
+
 // Load environment variables
 dotenv.config();
 
@@ -30,6 +32,7 @@ app.use(cookieParser());
 //API endpoints
 app.use("/api/auth", authRouter);
 app.use("/api/professor", professorsRouter);
+app.use("/api/college", collegeRouter);
 
 // Routes
 app.get("/", (_req, res) => {
