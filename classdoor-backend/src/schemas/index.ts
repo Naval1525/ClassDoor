@@ -1,5 +1,12 @@
 import { z } from 'zod';
 
+
+// Parameter validation schema
+export const idParamSchema = z.object({
+  id: z.string().uuid("Invalid professor ID format"),
+});
+
+
 // Anonymous user schema
 export const anonymousUserSchema = z.object({
   deviceHash: z.string().optional()
