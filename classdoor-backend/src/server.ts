@@ -8,6 +8,7 @@ import connectCloudinary from "./config/cloudinary.js";
 import authRouter from "./routes/auth.route.js";
 import professorsRouter from "./routes/professor.route.js";
 import collegeRouter from "./routes/college.route.js";
+import coursesRouter from "./routes/course.route.js";
 
 // Load environment variables
 dotenv.config();
@@ -33,6 +34,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRouter);
 app.use("/api/professor", professorsRouter);
 app.use("/api/college", collegeRouter);
+app.use("/api/course", coursesRouter);
 
 // Routes
 app.get("/", (_req, res) => {
@@ -47,9 +49,6 @@ io.on("connection", (socket) => {
     console.log(`🔴 Socket disconnected: ${socket.id}`);
   });
 });
-
-
-
 
 // Start server
 const PORT = process.env.PORT || 5000;

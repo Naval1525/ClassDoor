@@ -30,3 +30,13 @@ export const collegeSchema = z.object({
   description: z.string().optional()
 });
 
+// Course schema
+export const courseSchema = z.object({
+  code: z.string().min(2).max(20),
+  name: z.string().min(2).max(100),
+  description: z.string().optional(),
+  collegeId: z.string().uuid(),
+  professorIds: z.array(z.string().uuid()).optional()
+});
+
+
