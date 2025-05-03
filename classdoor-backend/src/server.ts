@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import { Server as SocketIOServer } from 'socket.io';
 import cookieParser from 'cookie-parser';
 import connectCloudinary from './config/cloudinary.js';
-
+import authRouter from './routes/auth.route.js';
 // Load environment variables
 dotenv.config();
 
@@ -25,6 +25,10 @@ const io = new SocketIOServer(server, {
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
+
+
+//API endpoints
+app.use("/api/auth",authRouter);
 
 // Routes
 app.get("/", (_req, res) => {

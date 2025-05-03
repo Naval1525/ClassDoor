@@ -1,9 +1,9 @@
 import express  from "express";
-import { createAnonymousSession } from "@/controllers/auth.controller.js";
+import { createAnonymousSession,refreshAnonymousSession } from "../controllers/auth.controller.js";
 
-const anonymousUserRouter = express.Router();
+const authRouter = express.Router();
 
-anonymousUserRouter.post("/create", createAnonymousSession);
-anonymousUserRouter.get("/verify",
+authRouter.post("/create", createAnonymousSession);
+authRouter.get("/refresh",refreshAnonymousSession);
 
-export default anonymousUserRouter;
+export default authRouter;
