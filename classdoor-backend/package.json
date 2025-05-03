@@ -7,7 +7,11 @@
     "test": "tests"
   },
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts"
+    "dev": "node --loader ts-node/esm src/server.ts",
+    "dev:watch": "nodemon --exec \"node --loader ts-node/esm\" src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -54,5 +58,9 @@
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3"
+  },
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
   }
 }
