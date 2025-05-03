@@ -227,7 +227,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "E:\\ClassDoor\\classdoor-backend\\src\\generated\\prisma",
+      "value": "/Users/naval/Desktop/DESKTOP/Projects 2/ClassDoor/classdoor-backend/src/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -236,12 +236,12 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "windows",
+        "value": "darwin-arm64",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "E:\\ClassDoor\\classdoor-backend\\prisma\\schema.prisma",
+    "sourceFilePath": "/Users/naval/Desktop/DESKTOP/Projects 2/ClassDoor/classdoor-backend/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

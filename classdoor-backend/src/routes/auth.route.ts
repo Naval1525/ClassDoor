@@ -3,7 +3,7 @@ import { createAnonymousSession,refreshAnonymousSession } from "../controllers/a
 
 const authRouter = express.Router();
 
-authRouter.post("/create", createAnonymousSession);
+authRouter.get("/create", createAnonymousSession);
 authRouter.get("/refresh",refreshAnonymousSession);
 
 export default authRouter;

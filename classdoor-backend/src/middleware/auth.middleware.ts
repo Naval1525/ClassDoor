@@ -1,8 +1,9 @@
 // src/middleware/auth.middleware.ts
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { prisma } from '../config/db.js';
+
 import { env } from '../config/env.js';
+import prisma from '../config/db.js';
 
 export const authenticateAnonymousUser = async (
   req: Request,
