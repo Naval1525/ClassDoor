@@ -28,14 +28,12 @@ import {
   validateBody,
   validateParams,
 } from "../middleware/validator.middleware.js";
-import { professorSchema } from "../schemas/index.js";
+import { idParamSchema, professorSchema } from "../schemas/index.js";
 
 const professorsRouter = express.Router();
 
-// Parameter validation schema
-const idParamSchema = z.object({
-  id: z.string().uuid("Invalid professor ID format"),
-});
+
+
 
 // Get all professors 
 professorsRouter.get("/all", getAllProfessors);
