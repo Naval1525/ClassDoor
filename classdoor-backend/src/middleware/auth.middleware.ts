@@ -4,8 +4,20 @@ import jwt from 'jsonwebtoken';
 import { env } from '../config/env.js';
 import prisma from '../config/db.js';
 
+// Define interface for the decoded token
+interface DecodedToken {
+  anonId: string;
+}
+
+// Create a custom interface that extends Request
+interface AuthenticatedRequest extends Request {
+  user?: {
+    anonId: string;
+  };
+}
+
 export const authenticateAnonymousUser = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
@@ -27,7 +39,7 @@ export const authenticateAnonymousUser = async (
       const decoded = jwt.verify(
         token,
         env.JWT_SECRET
-      ) as { anonId: string };
+      ) as DecodedToken;
 
       // Check if user exists
       const user = await prisma.anonymousUser.findUnique({

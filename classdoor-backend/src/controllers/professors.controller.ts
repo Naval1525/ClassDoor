@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 
-import { handleControllerError } from "@/middleware/error.middleware.js";
-import prisma from "@/config/db.js";
+import { handleControllerError } from "../middleware/error.middleware.js";
+import prisma from "../config/db.js";
 
 
 

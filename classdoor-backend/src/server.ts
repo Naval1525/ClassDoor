@@ -1,11 +1,12 @@
-import express from 'express';
-import http from 'http';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import { Server as SocketIOServer } from 'socket.io';
-import cookieParser from 'cookie-parser';
-import connectCloudinary from './config/cloudinary.js';
-import authRouter from './routes/auth.route.js';
+import express from "express";
+import http from "http";
+import cors from "cors";
+import dotenv from "dotenv";
+import { Server as SocketIOServer } from "socket.io";
+import cookieParser from "cookie-parser";
+import connectCloudinary from "./config/cloudinary.js";
+import authRouter from "./routes/auth.route.js";
+import professorsRouter from "./routes/professor.route.js";
 // Load environment variables
 dotenv.config();
 
@@ -26,9 +27,9 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 
-
 //API endpoints
-app.use("/api/auth",authRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/professor", professorsRouter);
 
 // Routes
 app.get("/", (_req, res) => {
