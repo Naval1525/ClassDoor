@@ -3,6 +3,7 @@ import http from 'http';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { Server as SocketIOServer } from 'socket.io';
+import cookieParser from 'cookie-parser';
 
 // Load environment variables
 dotenv.config();
@@ -19,6 +20,7 @@ const io = new SocketIOServer(server, {
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
 // Routes
 app.get('/', (_req, res) => {
