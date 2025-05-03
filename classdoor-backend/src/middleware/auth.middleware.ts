@@ -1,7 +1,6 @@
 // src/middleware/auth.middleware.ts
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-
 import { env } from '../config/env.js';
 import prisma from '../config/db.js';
 
