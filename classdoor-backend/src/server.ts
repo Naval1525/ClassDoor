@@ -8,13 +8,16 @@ import cookieParser from 'cookie-parser';
 // Load environment variables
 dotenv.config();
 
+//connect to cloudinary
+connectCloudinary();
+
 const app = express();
 const server = http.createServer(app);
 const io = new SocketIOServer(server, {
   cors: {
-    origin: '*',
-    methods: ['GET', 'POST']
-  }
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
 });
 
 // Middleware
@@ -23,8 +26,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Routes
-app.get('/', (_req, res) => {
-  res.send('🚀 Classdoor backend is up and running!');
+app.get("/", (_req, res) => {
+  res.send("🚀 Classdoor backend is up and running!");
 });
 
 
@@ -36,10 +39,10 @@ app.get('/', (_req, res) => {
 
 
 // Socket.IO setup
-io.on('connection', (socket) => {
+io.on("connection", (socket) => {
   console.log(`🟢 New socket connected: ${socket.id}`);
 
-  socket.on('disconnect', () => {
+  socket.on("disconnect", () => {
     console.log(`🔴 Socket disconnected: ${socket.id}`);
   });
 });
