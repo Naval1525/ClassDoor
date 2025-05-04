@@ -76,19 +76,6 @@ Classdoor solves this by offering an open, safe space for students to speak free
 
 ---
 
-## 🚧 Project Status
-
-This is a **backend-only** project created for learning purposes, written in **TypeScript** with schema validation using **Zod**, and includes:
-- Modular API structure
-- Real-time messaging via Socket.IO
-- Database modeling via Prisma (PostgreSQL)
-- Cloudinary integration for media
-- Redis for caching/trending
-
-The frontend may be built later. For now, it’s focused on backend architecture, privacy, and clean API design.
-
----
-
 ## 📢 Why This Project?
 
 Classdoor was created to:
