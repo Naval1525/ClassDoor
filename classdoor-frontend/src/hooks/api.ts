@@ -49,7 +49,7 @@ export const useAuth = () => {
   const createAnonymousSession = async () => {
     setLoading(true);
     try {
-      const response = await api.post('/auth/anonymous');
+      const response = await api.get('/auth/create');
       const { anonId, token } = response.data;
 
       localStorage.setItem('anonToken', token);
@@ -579,155 +579,155 @@ export const useCollege = (collegeId: string) => {
 };
 
 // Discussion Hooks
-export const useDiscussions = (initialParams = {}) => {
-  const [discussions, setDiscussions] = useState<any[]>([]);
-  const [pagination, setPagination] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+// export const useDiscussions = (initialParams = {}) => {
+//   const [discussions, setDiscussions] = useState<any[]>([]);
+//   const [pagination, setPagination] = useState<any>(null);
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState<string | null>(null);
 
-  const fetchDiscussions = useCallback(async (params = {}) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await api.get('/discussions', { params });
-      setDiscussions(response.data.data);
-      setPagination(response.data.pagination);
-      return response.data;
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to fetch discussions');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+//   const fetchDiscussions = useCallback(async (params = {}) => {
+//     setLoading(true);
+//     setError(null);
+//     try {
+//       const response = await api.get('/discussions', { params });
+//       setDiscussions(response.data.data);
+//       setPagination(response.data.pagination);
+//       return response.data;
+//     } catch (err: any) {
+//       setError(err.response?.data?.error || 'Failed to fetch discussions');
+//       throw err;
+//     } finally {
+//       setLoading(false);
+//     }
+//   }, []);
 
-  useEffect(() => {
-    fetchDiscussions(initialParams);
-  }, [fetchDiscussions]);
+//   useEffect(() => {
+//     fetchDiscussions(initialParams);
+//   }, [fetchDiscussions]);
 
-  const createDiscussion = async (data: any) => {
-    setLoading(true);
-    try {
-      const response = await api.post('/discussions', data);
-      setDiscussions(prev => [response.data, ...prev]);
-      return response.data;
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to create discussion');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
+//   const createDiscussion = async (data: any) => {
+//     setLoading(true);
+//     try {
+//       const response = await api.post('/discussions', data);
+//       setDiscussions(prev => [response.data, ...prev]);
+//       return response.data;
+//     } catch (err: any) {
+//       setError(err.response?.data?.error || 'Failed to create discussion');
+//       throw err;
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
 
-  return { discussions, pagination, loading, error, fetchDiscussions, createDiscussion };
-};
+//   return { discussions, pagination, loading, error, fetchDiscussions, createDiscussion };
+// };
 
-export const useDiscussion = (discussionId: string) => {
-  const [discussion, setDiscussion] = useState<any>(null);
-  const [comments, setComments] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+// export const useDiscussion = (discussionId: string) => {
+//   const [discussion, setDiscussion] = useState<any>(null);
+//   const [comments, setComments] = useState<any[]>([]);
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState<string | null>(null);
 
-  const fetchDiscussion = useCallback(async () => {
-    if (!discussionId) return;
+//   const fetchDiscussion = useCallback(async () => {
+//     if (!discussionId) return;
 
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await api.get(`/discussions/${discussionId}`);
-      setDiscussion(response.data);
-      setComments(response.data.comments || []);
-      return response.data;
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to fetch discussion');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [discussionId]);
+//     setLoading(true);
+//     setError(null);
+//     try {
+//       const response = await api.get(`/discussions/${discussionId}`);
+//       setDiscussion(response.data);
+//       setComments(response.data.comments || []);
+//       return response.data;
+//     } catch (err: any) {
+//       setError(err.response?.data?.error || 'Failed to fetch discussion');
+//       throw err;
+//     } finally {
+//       setLoading(false);
+//     }
+//   }, [discussionId]);
 
-  useEffect(() => {
-    fetchDiscussion();
-  }, [fetchDiscussion]);
+//   useEffect(() => {
+//     fetchDiscussion();
+//   }, [fetchDiscussion]);
 
-  const updateDiscussion = async (data: any) => {
-    if (!discussionId) return;
+//   const updateDiscussion = async (data: any) => {
+//     if (!discussionId) return;
 
-    setLoading(true);
-    try {
-      const response = await api.put(`/discussions/${discussionId}`, data);
-      setDiscussion(response.data);
-      return response.data;
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to update discussion');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
+//     setLoading(true);
+//     try {
+//       const response = await api.put(`/discussions/${discussionId}`, data);
+//       setDiscussion(response.data);
+//       return response.data;
+//     } catch (err: any) {
+//       setError(err.response?.data?.error || 'Failed to update discussion');
+//       throw err;
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
 
-  const deleteDiscussion = async () => {
-    if (!discussionId) return;
+//   const deleteDiscussion = async () => {
+//     if (!discussionId) return;
 
-    setLoading(true);
-    try {
-      await api.delete(`/discussions/${discussionId}`);
-      setDiscussion(null);
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to delete discussion');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
+//     setLoading(true);
+//     try {
+//       await api.delete(`/discussions/${discussionId}`);
+//       setDiscussion(null);
+//     } catch (err: any) {
+//       setError(err.response?.data?.error || 'Failed to delete discussion');
+//       throw err;
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
 
-  const addComment = async (content: string, parentId?: string) => {
-    if (!discussionId) return;
+//   const addComment = async (content: string, parentId?: string) => {
+//     if (!discussionId) return;
 
-    setLoading(true);
-    try {
-      const response = await api.post(`/discussions/${discussionId}/comments`, {
-        content,
-        parentId
-      });
+//     setLoading(true);
+//     try {
+//       const response = await api.post(`/discussions/${discussionId}/comments`, {
+//         content,
+//         parentId
+//       });
 
-      setComments(prev => [response.data, ...prev]);
-      return response.data;
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to add comment');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
+//       setComments(prev => [response.data, ...prev]);
+//       return response.data;
+//     } catch (err: any) {
+//       setError(err.response?.data?.error || 'Failed to add comment');
+//       throw err;
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
 
-  const deleteComment = async (commentId: string) => {
-    if (!discussionId || !commentId) return;
+//   const deleteComment = async (commentId: string) => {
+//     if (!discussionId || !commentId) return;
 
-    setLoading(true);
-    try {
-      await api.delete(`/discussions/${discussionId}/comments/${commentId}`);
-      setComments(prev => prev.filter(c => c.id !== commentId));
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to delete comment');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
+//     setLoading(true);
+//     try {
+//       await api.delete(`/discussions/${discussionId}/comments/${commentId}`);
+//       setComments(prev => prev.filter(c => c.id !== commentId));
+//     } catch (err: any) {
+//       setError(err.response?.data?.error || 'Failed to delete comment');
+//       throw err;
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
 
-  return {
-    discussion,
-    comments,
-    loading,
-    error,
-    fetchDiscussion,
-    updateDiscussion,
-    deleteDiscussion,
-    addComment,
-    deleteComment
-  };
-};
+//   return {
+//     discussion,
+//     comments,
+//     loading,
+//     error,
+//     fetchDiscussion,
+//     updateDiscussion,
+//     deleteDiscussion,
+//     addComment,
+//     deleteComment
+//   };
+// };
 
 // Trending Hooks
 export const useTrending = (collegeId: string) => {
@@ -836,89 +836,89 @@ export const useTrending = (collegeId: string) => {
 };
 
 // Socket Hooks
-export const useSocket = () => {
-  const [socket, setSocket] = useState<any>(null);
-  const [connected, setConnected] = useState(false);
-  const { isAuthenticated } = useAuth();
+// export const useSocket = () => {
+//   const [socket, setSocket] = useState<any>(null);
+//   const [connected, setConnected] = useState(false);
+//   const { isAuthenticated } = useAuth();
 
-  useEffect(() => {
-    // Load socket.io-client dynamically on client-side
-    const loadSocket = async () => {
-      if (!isAuthenticated) return;
+//   useEffect(() => {
+//     // Load socket.io-client dynamically on client-side
+//     const loadSocket = async () => {
+//       if (!isAuthenticated) return;
 
-      try {
-        const io = (await import('socket.io-client')).io;
+//       try {
+//         const io = (await import('socket.io-client')).io;
 
-        const token = localStorage.getItem('anonToken');
-        const newSocket = io('http://localhost:8000', {
-          auth: { token },
-          withCredentials: true
-        });
+//         const token = localStorage.getItem('anonToken');
+//         const newSocket = io('http://localhost:8000', {
+//           auth: { token },
+//           withCredentials: true
+//         });
 
-        newSocket.on('connect', () => {
-          console.log('Socket connected');
-          setConnected(true);
-        });
+//         newSocket.on('connect', () => {
+//           console.log('Socket connected');
+//           setConnected(true);
+//         });
 
-        newSocket.on('disconnect', () => {
-          console.log('Socket disconnected');
-          setConnected(false);
-        });
+//         newSocket.on('disconnect', () => {
+//           console.log('Socket disconnected');
+//           setConnected(false);
+//         });
 
-        setSocket(newSocket);
+//         setSocket(newSocket);
 
-        return () => {
-          newSocket.disconnect();
-        };
-      } catch (err) {
-        console.error('Socket connection failed:', err);
-      }
-    };
+//         return () => {
+//           newSocket.disconnect();
+//         };
+//       } catch (err) {
+//         console.error('Socket connection failed:', err);
+//       }
+//     };
 
-    loadSocket();
-  }, [isAuthenticated]);
+//     loadSocket();
+//   }, [isAuthenticated]);
 
-  const joinCollege = useCallback((collegeId: string) => {
-    if (socket && connected) {
-      socket.emit('join_college', collegeId);
-    }
-  }, [socket, connected]);
+//   const joinCollege = useCallback((collegeId: string) => {
+//     if (socket && connected) {
+//       socket.emit('join_college', collegeId);
+//     }
+//   }, [socket, connected]);
 
-  const joinDiscussion = useCallback((discussionId: string) => {
-    if (socket && connected) {
-      socket.emit('join_discussion', discussionId);
-    }
-  }, [socket, connected]);
+//   const joinDiscussion = useCallback((discussionId: string) => {
+//     if (socket && connected) {
+//       socket.emit('join_discussion', discussionId);
+//     }
+//   }, [socket, connected]);
 
-  const sendComment = useCallback((data: { content: string, discussionId: string, parentId?: string }) => {
-    if (socket && connected) {
-      socket.emit('comment', data);
-    }
-  }, [socket, connected]);
+//   const sendComment = useCallback((data: { content: string, discussionId: string, parentId?: string }) => {
+//     if (socket && connected) {
+//       socket.emit('comment', data);
+//     }
+//   }, [socket, connected]);
 
-  const listenForComments = useCallback((callback: (comment: any) => void) => {
-    if (socket) {
-      socket.on('new_comment', callback);
-      return () => socket.off('new_comment', callback);
-    }
-  }, [socket]);
+//   const listenForComments = useCallback((callback: (comment: any) => void) => {
+//     if (socket) {
+//       socket.on('new_comment', callback);
+//       return () => socket.off('new_comment', callback);
+//     }
+//   }, [socket]);
 
-  const listenForDiscussions = useCallback((callback: (discussion: any) => void) => {
-    if (socket) {
-      socket.on('new_discussion', callback);
-      return () => socket.off('new_discussion', callback);
-    }
-  }, [socket]);
+//   const listenForDiscussions = useCallback((callback: (discussion: any) => void) => {
+//     if (socket) {
+//       socket.on('new_discussion', callback);
+//       return () => socket.off('new_discussion', callback);
+//     }
+//   }, [socket]);
 
-  return {
-    socket,
-    connected,
-    joinCollege,
-    joinDiscussion,
-    sendComment,
-    listenForComments,
-    listenForDiscussions
-  };
-};
+//   return {
+//     socket,
+//     connected,
+//     joinCollege,
+//     joinDiscussion,
+//     sendComment,
+//     listenForComments,
+//     listenForDiscussions
+//   };
+// };
 
 export default api;
