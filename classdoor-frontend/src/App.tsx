@@ -1,16 +1,9 @@
-import { Button } from "./components/ui/button";
-import {  toast } from "sonner";
+import React from 'react'
 
 const App = () => {
-  const handleClick = () => {
-    toast("sexsux");
-  };
-
   return (
-    <>
-      <Button onClick={handleClick}>Show Toast</Button>
-    </>
-  );
-};
+    <div>App</div>
+  )
+}
 
-export default App;
+export default App
