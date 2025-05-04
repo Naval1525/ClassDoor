@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "dev": "node --loader ts-node/esm src/server.ts",
+    "dev": "tsx watch src/server.ts",
     "dev:watch": "nodemon --exec \"node --loader ts-node/esm\" src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
@@ -60,6 +60,7 @@
     "ts-jest": "^29.3.2",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
+    "tsx": "^4.19.4",
     "typescript": "^5.8.3"
   },
   "ts-node": {

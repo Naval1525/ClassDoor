@@ -12,11 +12,15 @@ export const getAllReviews = async (req: Request, res: Response) => {
   }
 };
 
-export const getReviewById = async (req: Request, res: Response) => {
+export const getReviewById = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const data = await reviewService.getReviewById(req.params.id);
     if (!data) {
-      return res.status(404).json({ message: "Review not found." });
+      res.status(404).json({ message: "Review not found." });
+      return;
     }
     res.json({ data });
   } catch (e) {
@@ -44,17 +48,19 @@ export const createReview = async (
 export const updateReview = async (
   req: Request,
   res: Response
-) => {
+): Promise<void> => {
   try {
     const authorId = req.user?.anonId;
     const { id } = req.params;
     const updated = await reviewService.updateReview(id, req.body, authorId);
 
     if (updated === "not_found") {
-      return res.status(404).json({ message: "Review not found." });
+      res.status(404).json({ message: "Review not found." });
+      return;
     }
     if (updated === "unauthorized") {
-      return res.status(403).json({ error: "Unauthorized" });
+      res.status(403).json({ error: "Unauthorized" });
+      return;
     }
 
     res.json({ data: updated });
@@ -66,16 +72,18 @@ export const updateReview = async (
 export const deleteReview = async (
   req: Request,
   res: Response
-) => {
+): Promise<void> => {
   try {
     const authorId = req.user?.anonId;
     const deleted = await reviewService.deleteReview(req.params.id, authorId);
 
     if (deleted === "not_found") {
-      return res.status(404).json({ message: "Review not found." });
+      res.status(404).json({ message: "Review not found." });
+      return;
     }
     if (deleted === "unauthorized") {
-      return res.status(403).json({ error: "Unauthorized" });
+      res.status(403).json({ error: "Unauthorized" });
+      return;
     }
 
     res.status(204).send();
@@ -87,10 +95,11 @@ export const deleteReview = async (
 export const addReviewReaction = async (
   req: Request,
   res: Response
-) => {
+): Promise<void> => {
   try {
     if (!req.user) {
-      return res.status(401).json({ error: "Authentication required" });
+      res.status(401).json({ error: "Authentication required" });
+      return;
     }
 
     const reactionType = req.params.reactionType;
@@ -101,7 +110,9 @@ export const addReviewReaction = async (
       ReactionType[reactionType as keyof typeof ReactionType]
     );
 
-    res.status(201).json({ message: "Reaction created successfully", reaction });
+    res
+      .status(201)
+      .json({ message: "Reaction created successfully", reaction });
   } catch (e) {
     handleControllerError(e, res);
   }
@@ -110,7 +121,7 @@ export const addReviewReaction = async (
 export const removeReviewReaction = async (
   req: Request,
   res: Response
-) => {
+): Promise<void> => {
   try {
     const deleted = await reviewService.removeReaction(
       req.params.id,
@@ -119,7 +130,8 @@ export const removeReviewReaction = async (
     );
 
     if (!deleted) {
-      return res.status(404).json({ error: "Reaction not found" });
+      res.status(404).json({ error: "Reaction not found" });
+      return;
     }
 
     res.status(200).json({ message: "Reaction deleted successfully" });
