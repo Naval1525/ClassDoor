@@ -10,6 +10,7 @@ import professorsRouter from "./routes/professor.route.js";
 import collegeRouter from "./routes/college.route.js";
 import coursesRouter from "./routes/course.route.js";
 import reviewsRouter from "./routes/reviews.route.js";
+// import reviewsRouter from "./routes/reviews.route.js";
 
 // Load environment variables
 dotenv.config();
