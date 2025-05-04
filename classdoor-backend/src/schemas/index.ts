@@ -1,4 +1,5 @@
 import { z } from 'zod';
+// import { TrendingEntityType, TrendingPeriod } from '../types/trending.js';
 
 
 // Parameter validation schema
@@ -50,3 +51,68 @@ export const reviewSchema = z.object({
   tags: z.array(z.string().min(2).max(30)).max(5)
 });
 
+export const TrendingEntityType = {
+  PROFESSOR: 'professor',
+  COURSE: 'course',
+  COLLEGE: 'college'
+};
+
+export const TrendingPeriod = {
+  DAY: 'day',
+  WEEK: 'week',
+  MONTH: 'month'
+};
+
+// Updated schema to handle potential numeric period values
+export const getTrendingQuerySchema = z.object({
+  type: z.nativeEnum(TrendingEntityType).optional(),
+  period: z.union([
+    z.nativeEnum(TrendingPeriod),
+    z.string().transform(val => {
+      // Convert numeric strings to appropriate enum values
+      switch(val) {
+        case '0': return TrendingPeriod.DAY;
+        case '1': return TrendingPeriod.WEEK;
+        case '2': return TrendingPeriod.MONTH;
+        default: return val;
+      }
+    })
+  ]).optional().default(TrendingPeriod.WEEK),
+  limit: z.string().regex(/^\d+$/).transform(Number).optional().default('10')
+});
+
+export const getSpecificTrendingQuerySchema = z.object({
+  period: z.union([
+    z.nativeEnum(TrendingPeriod),
+    z.string().transform(val => {
+      // Convert numeric strings to appropriate enum values
+      switch(val) {
+        case '0': return TrendingPeriod.DAY;
+        case '1': return TrendingPeriod.WEEK;
+        case '2': return TrendingPeriod.MONTH;
+        default: return val;
+      }
+    })
+  ]).optional().default(TrendingPeriod.WEEK),
+  limit: z.string().regex(/^\d+$/).transform(Number).optional().default('10'),
+  page: z.string().regex(/^\d+$/).transform(Number).optional(),
+  pageSize: z.string().regex(/^\d+$/).transform(Number).optional()
+});
+
+export const getHomePageTrendingQuerySchema = z.object({
+  period: z.union([
+    z.nativeEnum(TrendingPeriod),
+    z.string().transform(val => {
+      // Convert numeric strings to appropriate enum values
+      switch(val) {
+        case '0': return TrendingPeriod.DAY;
+        case '1': return TrendingPeriod.WEEK;
+        case '2': return TrendingPeriod.MONTH;
+        default: return val;
+      }
+    })
+  ]).optional().default(TrendingPeriod.WEEK),
+  professorLimit: z.string().regex(/^\d+$/).transform(Number).optional().default('5'),
+  courseLimit: z.string().regex(/^\d+$/).transform(Number).optional().default('5'),
+  collegeLimit: z.string().regex(/^\d+$/).transform(Number).optional().default('5')
+});

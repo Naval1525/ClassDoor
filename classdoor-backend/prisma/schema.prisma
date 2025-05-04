@@ -37,7 +37,7 @@ model College {
   professors   Professor[]
   courses      Course[]
   discussions  Discussion[]
-  reviews      Review[]     
+  reviews      Review[]
 
   @@unique([name, location])
 }
