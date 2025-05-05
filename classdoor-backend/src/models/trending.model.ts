@@ -101,7 +101,7 @@ export const getTrendingProfessors = async (
 
   // Sort by score and limit results
   return trendingProfessors
-    .filter(prof => prof.score > 0) // Only include professors with activity
+    .filter(prof => prof.score >= 0) // Only include professors with activity
     .sort((a, b) => b.score - a.score)
     .slice(0, limit);
 };
