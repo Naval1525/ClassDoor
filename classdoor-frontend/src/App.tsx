@@ -1,4 +1,4 @@
-import { useAuth } from '@/hooks/api';
+import { useAuth } from '@/hooks/auth.api';
 import Authpopup from '@/components/shared/Authpopup';
 import Layout from '@/components/layout/Layout';
 

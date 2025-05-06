@@ -5,10 +5,8 @@ import {
   Activity,
   PenTool,
   User,
-  RefreshCw,
-  Settings,
-  LogOut,
 } from "lucide-react";
+import RefreshButton from "./RefreshButton";
 
 type PageType = "home" | "trending" | "activity" | "createpost" | "mypost";
 
@@ -88,17 +86,8 @@ const LeftSideBar: FC<LeftSideBarProps> = ({ activePage, setActivePage }) => {
         </div>
 
         {/* Bottom Actions */}
-        <div className="pt-6 mt-6 border-t border-gray-800/50">
-          <button
-            className="flex items-center w-full p-3 rounded-xl text-base font-medium
-                      text-gray-400 hover:text-white hover:bg-gray-800/50 transition-all"
-          >
-            <RefreshCw
-              size={24}
-              className="mr-4 transition-transform hover:rotate-180 duration-500"
-            />
-            <span>Refresh</span>
-          </button>
+        <div className="pt-6 mt-6 ml-10">
+          <RefreshButton/>
         </div>
       </div>
     </div>
