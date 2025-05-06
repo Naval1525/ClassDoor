@@ -1,40 +1,38 @@
-import { useState } from 'react';
-import { RefreshCw } from 'lucide-react';
+import { useState } from "react";
+import { RefreshCw } from "lucide-react";
+import { useAuth } from "@/hooks/auth.api";
 
 const RefreshButton = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
-  
+  const { refreshToken } = useAuth();
+
   const handleRefresh = () => {
     setIsRefreshing(true);
-    
+    refreshToken();
+
     // Simulate refresh process
     setTimeout(() => {
       setIsRefreshing(false);
     }, 1000);
   };
-  
+
   return (
     <button
       onClick={handleRefresh}
       disabled={isRefreshing}
       className={`
-        flex flex-col items-center justify-center p-3 
-        rounded-xl text-xs font-medium w-full h-16
-        transition-all duration-300
-        ${isRefreshing
-          ? 'bg-gray-800/60 text-gray-500 cursor-not-allowed'
-          : 'text-gray-400 hover:text-white hover:bg-gray-800/40'
+        flex flex-row items-center justify-center  gap-2
+        px-4 py-2 rounded-md text-sm font-medium
+        h-10 w-auto border transition-colors duration-200
+        ${
+          isRefreshing
+            ? "bg-gray-100 text-gray-500 border-gray-300 cursor-not-allowed"
+            : "bg-black text-white border-gray-200 hover:bg-white hover:text-black"
         }
       `}
     >
-      <RefreshCw 
-        size={18} 
-        className={`
-          mb-1
-          ${isRefreshing ? 'animate-spin text-blue-400' : ''}
-        `}
-      />
-      <span>{isRefreshing ? 'Refreshing' : 'Refresh'}</span>
+      <RefreshCw size={16} className={isRefreshing ? "animate-spin" : ""} />
+      <span>{isRefreshing ? "Refreshing" : "Refresh"}</span>
     </button>
   );
 };
