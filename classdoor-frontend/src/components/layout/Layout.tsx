@@ -15,7 +15,7 @@ const Layout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Function to handle page changes, passed to LeftSideBar
+ 
   const handlePageChange = (page: PageType) => {
     setActivePage(page);
     setIsMobileMenuOpen(false); // Close mobile menu when changing pages
