@@ -18,10 +18,7 @@ const Layout = () => {
  
   const handlePageChange = (page: PageType) => {
     setActivePage(page);
-    setIsMobileMenuOpen(false); // Close mobile menu when changing pages
-  };
-
-  // Handle window resize to close mobile menu on desktop
+    setIsMobileMenuOpen(false);
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 1024);
